@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { BASE_URL } from '../services/apiService';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const isLogin = ref(true);
@@ -11,6 +11,9 @@ const lastname = ref('');
 const phone = ref('');
 const date = ref('');
 const username = ref('');
+const token = ref('');
+
+const router = useRouter();
 
 const toggleForm = () => {
     isLogin.value = !isLogin.value;
@@ -19,32 +22,43 @@ const toggleForm = () => {
 const handleSubmit = async () => {
     if (isLogin.value) {
         // Lógica para iniciar sesión
-        console.log('Iniciar sesión con', email.value, password.value);
+        console.log('Iniciar sesión con', username.value, password.value);
+        try {
+            const response = await axios.post('http://127.0.0.1:5000/login', {
+                username: username.value,
+                password: password.value
+            });
+            if (response.data.access_token) {
+                token.value = response.data.access_token;
+                console.log('Inicio de sesión exitoso');
+                router.push('/home');
+            } else {
+                console.log('Nombre de usuario o contraseña incorrectos');
+            }
+        } catch (error) {
+            console.error('Error al iniciar sesión:', error.response ? error.response.data : error.message);
+        }
     } else {
         console.log('Registrarse con', username.value, password.value, name.value, lastname.value, email.value, phone.value, date.value);
         // Lógica para registrarse
         try {
-            const response = await fetch("http://127.0.0.1:5000/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify(
-                    {
-                        "username": username.value,
-                        "password": password.value,
-                        "name": name.value,
-                        "lastname": lastname.value,
-                        "email": email.value,
-                        "phone": phone.value,
-                        "date": date.value
-                    }
-                ),
+            const response = await axios.post('http://127.0.0.1:5000/register', {
+                username: username.value,
+                password: password.value,
+                name: name.value,
+                lastname: lastname.value,
+                email: email.value,
+                phone: phone.value,
+                date: date.value
             });
-            console.log(response.data);
+            if (response.status === 200) {
+                console.log('Registro exitoso');
+                router.push('/home');
+            } else {
+                console.log('Error en el registro');
+            }
         } catch (error) {
-            console.error(error);
+            console.error('Error al registrarse:', error.response ? error.response.data : error.message);
         }
     }
 };
@@ -55,7 +69,7 @@ const handleSubmit = async () => {
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold mb-6 text-center">{{ isLogin ? 'Iniciar Sesión' : 'Registrarse' }}</h1>
             <form @submit.prevent="handleSubmit">
-                <div v-if="!isLogin" class="mb-4">
+                <div class="mb-4">
                     <label for="username" class="block text-sm font-medium text-gray-700">Nombre de Usuario</label>
                     <input type="text" id="username" v-model="username" required
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
@@ -80,7 +94,7 @@ const handleSubmit = async () => {
                     <input type="text" id="date" v-model="date" required placeholder="DD/MM/YYYY"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                 </div>
-                <div class="mb-4">
+                <div v-if="!isLogin" class="mb-4">
                     <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
                     <input type="email" id="email" v-model="email" required
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
