@@ -4,7 +4,7 @@ import AuthForm from './components/AuthForm.vue';
 
 <template>
   <div id="app">
-    <AuthForm />
+    <router-view></router-view>
   </div>
 </template>
 

@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useInfoStore } from '../store/info';
 
 const isLogin = ref(true);
 const email = ref('');
@@ -11,15 +12,18 @@ const lastname = ref('');
 const phone = ref('');
 const date = ref('');
 const username = ref('');
-const token = ref('');
+const errorMessage = ref('');
 
 const router = useRouter();
+const infoStore = useInfoStore();
 
 const toggleForm = () => {
     isLogin.value = !isLogin.value;
+    errorMessage.value = ''; // Limpiar el mensaje de error al cambiar de formulario
 };
 
 const handleSubmit = async () => {
+    errorMessage.value = ''; // Limpiar el mensaje de error antes de enviar el formulario
     if (isLogin.value) {
         // Lógica para iniciar sesión
         console.log('Iniciar sesión con', username.value, password.value);
@@ -29,14 +33,17 @@ const handleSubmit = async () => {
                 password: password.value
             });
             if (response.data.access_token) {
-                token.value = response.data.access_token;
+                infoStore.setUserInfo({
+                    username: username.value,
+                    token: response.data.access_token,
+                });
                 console.log('Inicio de sesión exitoso');
                 router.push('/home');
             } else {
-                console.log('Nombre de usuario o contraseña incorrectos');
+                errorMessage.value = 'Nombre de usuario o contraseña incorrectos';
             }
         } catch (error) {
-            console.error('Error al iniciar sesión:', error.response ? error.response.data : error.message);
+            errorMessage.value = error.response ? error.response.data.msg : error.message;
         }
     } else {
         console.log('Registrarse con', username.value, password.value, name.value, lastname.value, email.value, phone.value, date.value);
@@ -52,23 +59,32 @@ const handleSubmit = async () => {
                 date: date.value
             });
             if (response.status === 200) {
+                infoStore.setUserInfo({
+                    username: username.value,
+                    name: name.value,
+                    lastname: lastname.value,
+                    email: email.value,
+                    phone: phone.value,
+                });
                 console.log('Registro exitoso');
                 router.push('/home');
             } else {
-                console.log('Error en el registro');
+                errorMessage.value = 'Error en el registro';
             }
         } catch (error) {
-            console.error('Error al registrarse:', error.response ? error.response.data : error.message);
+            errorMessage.value = error.response ? error.response.data.msg : error.message;
         }
     }
 };
 </script>
-
 <template>
     <main class="flex items-center justify-center min-h-screen bg-gray-100">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold mb-6 text-center">{{ isLogin ? 'Iniciar Sesión' : 'Registrarse' }}</h1>
             <form @submit.prevent="handleSubmit">
+                <div v-if="errorMessage" class="mb-4 text-red-500 text-sm">
+                    {{ errorMessage }}
+                </div>
                 <div class="mb-4">
                     <label for="username" class="block text-sm font-medium text-gray-700">Nombre de Usuario</label>
                     <input type="text" id="username" v-model="username" required
