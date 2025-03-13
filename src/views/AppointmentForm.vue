@@ -73,7 +73,6 @@ watch(selectedDate.value, async (newDate) => {
 });
 
 const onDateChange = async () => {
-    console.log(selectedDate.value);
   if (selectedDate.value) {
     const formattedDate = formatDate(new Date(selectedDate.value));
     console.log(formattedDate);

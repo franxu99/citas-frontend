@@ -44,27 +44,12 @@ const handleSubmit = async () => {
         console.log('Registrarse con', username.value, password.value, name.value, lastname.value, email.value, phone.value, date.value);
         // Lógica para registrarse
         try {
-            const response = await axios.post('http://127.0.0.1:5000/register', {
-                username: username.value,
-                password: password.value,
-                name: name.value,
-                lastname: lastname.value,
-                email: email.value,
-                phone: phone.value,
-                date: date.value
-            });
-            if (response.status === 200) {
-                infoStore.setUserInfo({
-                    username: username.value,
-                    name: name.value,
-                    lastname: lastname.value,
-                    email: email.value,
-                    phone: phone.value,
-                });
-                console.log('Registro exitoso');
-                router.push('/');
-            } else {
-                errorMessage.value = 'Error en el registro';
+            let response = await infoStore.register(username.value, password.value, name.value, lastname.value, email.value, phone.value, date.value);
+            console.log(response)
+            if(response.status === 200){
+                alert('Registro exitoso');
+            }else{
+                errorMessage.value = response.data.msg;
             }
         } catch (error) {
             errorMessage.value = error.response ? error.response.data.msg : error.message;

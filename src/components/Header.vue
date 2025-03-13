@@ -7,9 +7,9 @@
     <nav>
         <ul class="flex space-x-4">
           <li><router-link to="/" class="hover:underline">Inicio</router-link></li>
-          <li><router-link to="/services" class="hover:underline">Servicios</router-link></li>
-          <li><router-link to="/about" class="hover:underline">Acerca de</router-link></li>
-          <li><router-link to="/contact" class="hover:underline">Contacto</router-link></li>
+          <li>Servicios</li>
+          <li>Acerca de</li>
+          <li>Contacto</li>
         </ul>
       </nav>
     <div class="flex items-center">

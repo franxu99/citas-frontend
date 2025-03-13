@@ -12,15 +12,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="appointment in appointmentsStore.appointments" :key="appointment.id">
-          <td class="py-2 px-4 border-b text-center">{{ appointment.username }}</td>
-          <td class="py-2 px-4 border-b text-center">{{ formatDate(appointment.date) }}</td>
-          <td class="py-2 px-4 border-b text-center">{{ formatTime(appointment.date) }}</td>
-          <td class="py-2 px-4 border-b text-center">{{ appointment.center }}</td>
-          <td class="py-2 px-4 border-b text-center">
-            <button @click="deleteAppointment(appointment)" class="bg-red-500 text-white px-4 py-2 rounded cursor-pointer">Eliminar</button>
-          </td>
-        </tr>
+        <template v-if="appointmentsStore.appointments.length === 0">
+          <tr>
+            <td class="py-2 px-4 border-b text-center" colspan="5">No hay citas agendadas</td>
+          </tr>
+
+        </template>
+        <template v-else>
+          <tr v-for="appointment in appointmentsStore.appointments" :key="appointment.id">
+            <td class="py-2 px-4 border-b text-center">{{ appointment.username }}</td>
+            <td class="py-2 px-4 border-b text-center">{{ formatDate(appointment.date) }}</td>
+            <td class="py-2 px-4 border-b text-center">{{ formatTime(appointment.date) }}</td>
+            <td class="py-2 px-4 border-b text-center">{{ appointment.center }}</td>
+            <td class="py-2 px-4 border-b text-center">
+              <button @click="deleteAppointment(appointment)" class="bg-red-500 text-white px-4 py-2 rounded cursor-pointer">Eliminar</button>
+            </td>
+          </tr>
+        </template>
       </tbody>
     </table>
   </div>
@@ -38,11 +46,13 @@ onMounted(async () => {
 });
 
 const formatDate = (dateString) => {
+  if (!dateString) return '';
   const [date, time] = dateString.split(' ');
   return date;
 };
 
 const formatTime = (dateString) => {
+  if (!dateString) return '';
   const [date, time] = dateString.split(' ');
   return time.slice(0, 5);
 };

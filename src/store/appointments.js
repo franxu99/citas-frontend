@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import axios from 'axios';
 import { useInfoStore } from './info';
-import { data } from 'autoprefixer';
 
 export const useAppointmentsStore = defineStore('appointments', () => {
     const appointments = ref([]);

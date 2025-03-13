@@ -118,6 +118,33 @@ export const useInfoStore = defineStore('info', () => {
         }
     };
 
+    const register = async (username, password, name, lastname, email, phone, date) => {
+        try {
+            console.log(date)
+            const response = await axios.post('http://127.0.0.1:5000/register', 
+                {
+                    date: date,
+                    email: email,
+                    lastname: lastname,
+                    name: name,
+                    password: password,
+                    phone: phone,
+                    username: username
+                }
+            );
+            if (response.status === 200) {
+                console.log('Registro exitoso');
+                return response;
+            } else {
+                console.error('Error al registrar el usuario:', response.data);
+                return false;
+            }
+        } catch (error) {
+            console.error('Error al registrar el usuario:', error);
+            return false;
+        }
+    };
+
     return {
         username,
         name,
@@ -131,6 +158,7 @@ export const useInfoStore = defineStore('info', () => {
         clearUserInfo,
         fetchUserProfile,
         updateUserProfile,
-        login
+        login,
+        register
     };
 });
