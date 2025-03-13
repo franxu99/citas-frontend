@@ -1,9 +1,13 @@
 <script setup>
-import AuthForm from './components/AuthForm.vue';
+import { useInfoStore } from './store/info';
+import Header from './components/header.vue';
+
+const infoStore = useInfoStore();
 </script>
 
 <template>
   <div id="app">
+    <Header v-if="infoStore.isAuthenticated" />
     <router-view></router-view>
   </div>
 </template>

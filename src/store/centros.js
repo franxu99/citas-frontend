@@ -1,30 +1,30 @@
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import axios from 'axios';
+import { useInfoStore } from './info';
 
-export const useInfoStore = defineStore('info', {
-    state: () => ({
-        username: '',
-        name: '',
-        lastname: '',
-        email: '',
-        phone: '',
-        token: '',
-    }),
-    actions: {
-        setUserInfo(userInfo) {
-            this.username = userInfo.username;
-            this.name = userInfo.name;
-            this.lastname = userInfo.lastname;
-            this.email = userInfo.email;
-            this.phone = userInfo.phone;
-            this.token = userInfo.token;
-        },
-        clearUserInfo() {
-            this.username = '';
-            this.name = '';
-            this.lastname = '';
-            this.email = '';
-            this.phone = '';
-            this.token = '';
-        },
-    },
+export const useCentrosStore = defineStore('centros', () => {
+    const centros = ref([]);
+    const infoStore = useInfoStore();
+
+    const fetchCentros = async () => {
+        try {
+            console.log('token:', infoStore.token);
+            const response = await axios.get('http://127.0.0.1:5000/centers', {
+                headers: {
+                    Authorization: `Bearer ${infoStore.token}`
+                }
+            }
+            );
+            centros.value = response.data;
+            return centros.value;
+        } catch (error) {
+            console.error('Error al obtener los centros:', error);
+        }
+    }
+
+    return {
+        centros,
+        fetchCentros
+    };
 });
