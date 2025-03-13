@@ -8,7 +8,7 @@
       </div>
       <div class="mb-4">
         <label for="date" class="block text-sm font-medium text-gray-700">Fecha</label>
-        <Calendar v-model="selectedDate" dateFormat="dd/mm/yy" placeholder="Selecciona una fecha" class="w-full" @change="fetchAppointments" />
+        <Calendar v-model="selectedDate" dateFormat="dd/mm/yy" placeholder="Selecciona una fecha" class="w-full" @update:modelValue="onDateChange" />
       </div>
       <div class="mb-4">
         <label for="time" class="block text-sm font-medium text-gray-700">Hora</label>
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { Select } from 'primevue';
 import Calendar from 'primevue/calendar';
@@ -56,14 +56,39 @@ onMounted(async () => {
   console.log(services.value);
 });
 
-const fetchAppointments = async () => {
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+watch(selectedDate.value, async (newDate) => {
+    if (newDate) {
+        console.log("Fecha cambiada:", newDate);
+        const formattedDate = formatDate(new Date(newDate));
+        reservedHours.value = await appointmentsStore.fetchAppointments(formattedDate);
+        console.log("Horas reservadas:", reservedHours.value);
+    }
+});
+
+const onDateChange = async () => {
+    console.log(selectedDate.value);
   if (selectedDate.value) {
-    reservedHours.value = await appointmentsStore.fetchAppointments(selectedDate.value);
+    const formattedDate = formatDate(new Date(selectedDate.value));
+    console.log(formattedDate);
+    let res = await appointmentsStore.fetchAppointments(formattedDate);
+    if(res.status === 200){
+      reservedHours.value = res.data;
+    }
   }
 };
 
 const isHourDisabled = (hour) => {
-  return reservedHours.value.includes(hour);
+  return reservedHours.value.some(reserved => {
+    const reservedTime = reserved.date.split(' ')[1].slice(0, 5); // Extrae solo la hora en formato "HH:MM"
+    return reservedTime === hour;
+  });
 };
 
 const selectTime = (hour) => {
@@ -92,13 +117,12 @@ const handleSubmit = async () => {
   console.log('Fecha:', selectedDate.value);
   console.log('Hora:', selectedTime.value);
 
-  const combinedDateTime = formatDateTime(selectedDate.value, selectedTime.value);
+  const combinedDateTime = formatDateTime(new Date(selectedDate.value), selectedTime.value);
 
-
-    let response = await appointmentsStore.createAppointment({
-        center: selectedService.value.name,
-        date: combinedDateTime
-    });
+  let response = await appointmentsStore.createAppointment({
+    center: selectedService.value.name,
+    date: combinedDateTime
+  });
 
   response.status === 200 ? alert('Cita agendada correctamente') : alert('Error al agendar la cita');
   router.push('/');

@@ -55,7 +55,7 @@ const goToAppointmentForm = () => {
 };
 
 const goToAppointments = () => {
-  router.push('/appointments');
+  router.push('/appointment');
 };
 </script>
 

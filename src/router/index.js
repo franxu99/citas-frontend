@@ -4,9 +4,11 @@ import AppointmentForm from '../views/AppointmentForm.vue';
 import Settings from '../views/Settings.vue';
 import Login from '../views/AuthForm.vue';
 import { useInfoStore } from '../store/info';
+import Appointments from '../views/Appointments.vue';
 
 const routes = [
   { path: '/', component: Home, meta: { requiresAuth: true } },
+  { path: '/appointment', component: Appointments, meta: { requiresAuth: true } },
   { path: '/appointment-form', component: AppointmentForm, meta: { requiresAuth: true } },
   { path: '/settings', component: Settings, meta: { requiresAuth: true } },
   { path: '/login', component: Login },
