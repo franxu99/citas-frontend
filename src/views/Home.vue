@@ -1,15 +1,16 @@
 <template>
-  <div>
-
-    <main class="p-6">
-      <section class="mb-8">
-        <h2 class="text-2xl text-center font-bold mb-4">Bienvenido a Salud Nova</h2>
-        <p class="text-gray-700">En Salud Nova, nos dedicamos a proporcionar la mejor atención médica a nuestros pacientes. Nuestro equipo de profesionales está aquí para ayudarte con todas tus necesidades de salud.</p>
+  <div class="min-h-screen ">
+    <main class="container mx-auto p-6">
+      <section class="mb-12 text-center">
+        <h2 class="text-4xl font-bold text-blue-600 mb-4">Bienvenido a Salud Nova</h2>
+        <p class="text-lg text-gray-700">En Salud Nova, nos dedicamos a proporcionar la mejor atención médica a nuestros pacientes. Nuestro equipo de profesionales está aquí para ayudarte con todas tus necesidades de salud.</p>
       </section>
-
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Nuestros Servicios</h2>
-        <ul class="list-disc list-inside text-gray-700">
+      <section class="mb-12">
+        <Carrusel />
+      </section>
+      <section class="mb-12 flex flex-col items-center">
+        <h2 class="text-3xl font-bold text-blue-600 mb-4">Nuestros Servicios</h2>
+        <ul class="list-disc list-inside text-lg text-gray-700 space-y-2">
           <li>Consultas médicas generales</li>
           <li>Especialidades médicas</li>
           <li>Laboratorio clínico</li>
@@ -17,17 +18,15 @@
           <li>Urgencias 24/7</li>
         </ul>
       </section>
-
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Contáctanos</h2>
-        <p class="text-gray-700">Si tienes alguna pregunta o necesitas más información, no dudes en ponerte en contacto con nosotros a través de nuestro formulario de contacto o llamando al (123) 456-7890.</p>
+      <section class="mb-12">
+        <h2 class="text-3xl font-bold text-blue-600 mb-4">Contáctanos</h2>
+        <p class="text-lg text-gray-700">Si tienes alguna pregunta o necesitas más información, no dudes en ponerte en contacto con nosotros a través de nuestro formulario de contacto o llamando al (123) 456-7890.</p>
       </section>
-
-      <section class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Gestión de Citas</h2>
-        <div class="flex space-x-4">
-          <button @click="goToAppointmentForm" class="bg-green-500 text-white px-4 py-2 rounded">Agendar Cita</button>
-          <button @click="goToAppointments" class="bg-blue-500 text-white px-4 py-2 rounded">Ver Citas</button>
+      <section class="mb-12">
+        <h2 class="text-3xl font-bold text-blue-600 mb-4">Gestión de Citas</h2>
+        <div class="flex justify-center space-x-4">
+          <button @click="goToAppointmentForm" class="bg-green-500 text-white px-6 py-3 rounded-lg shadow hover:bg-green-600 transition duration-300">Agendar Cita</button>
+          <button @click="goToAppointments" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600 transition duration-300">Ver Citas</button>
         </div>
       </section>
     </main>
@@ -37,6 +36,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { useInfoStore } from '../store/info';
+import Carrusel from '../components/Carrusel.vue';
 
 const router = useRouter();
 const infoStore = useInfoStore();
@@ -60,9 +60,6 @@ const goToAppointments = () => {
 </script>
 
 <style scoped>
-body {
-  background-color: #f3f4f6;
-}
 
 header {
   background-color: #3b82f6;
